@@ -1,5 +1,5 @@
 import pygame
-
+import random
 from utils import check_input
 
 
@@ -94,8 +94,6 @@ def show_menu():
     return flag, input_texts
 
 
-import pygame
-import random
 
 # define const values
 S1 = 1
@@ -120,7 +118,7 @@ cell_size = 7
 
 
 class Cell:
-    def _init_(self, is_person, cell_type, x, y, l):
+    def __init__(self, is_person, cell_type, x, y, l):
         self.is_person = is_person
         self.cell_type = cell_type
         self.x = x
@@ -195,9 +193,9 @@ def show_grid(grid):
         pygame.display.flip()
 
         # Quit Pygame
-        pygame.quit()
+    pygame.quit()
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    show_menu()
+    startGame(0.5, 0.2, 0.3, 0.2, 0.3, 2)
