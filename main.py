@@ -91,15 +91,16 @@ def show_menu():
     # Quit Pygame
     pygame.quit()
     flag = check_input(input_texts)
-    return flag, input_texts
-
+    startGame(flag, float(input_texts[0]), float(input_texts[1]), float(input_texts[2]), float(input_texts[3]),
+              float(input_texts[4]), float(input_texts[5]))
 
 
 # define const values
-S1 = 1
-S2 = 2
-S3 = 3
-S4 = 4
+S1 = 0
+S2 = 1
+S3 = 2
+S4 = 3
+rumour_chance = [1, 2 / 3, 1 / 3, 0]
 COLORS = {
     S1: (255, 255, 255),
     S2: (0, 0, 255),
@@ -125,7 +126,6 @@ class Cell:
         self.y = y
         self.rumor = 0
         self.l = l
-        self.wait = 0
 
     def draw(self, surface, x, y, cell_size):
         if (self.rumor == 0):
@@ -136,12 +136,31 @@ class Cell:
         rect = pygame.Rect(x, y, cell_size, cell_size)
         pygame.draw.rect(surface, color, rect)
 
-    def forward(self):
-        if self.rumor > 0:
-            chance = (1 / self.cell_type) * self.rumor
+    def chance_spread(self):
+        if self.rumor == 0:
+            return 0
+        if self.rumor == 1:
+            return rumour_chance[self.cell_type]
+        if self.rumor == 2:
+            if self.cell_type == 0:
+                return 1
+            else:
+                return rumour_chance[self.cell_type - 1]
+        if self.rumor == 3:
+            if self.cell_type == 0 or self.cell_type == 1:
+                return 1
+            else:
+                return rumour_chance[self.cell_type - 2]
+        if self.rumor == 4:
+            if self.cell_type == 0 or self.cell_type == 1 or self.cell_type == 2:
+                return 1
+            else:
+                return rumour_chance[self.cell_type - 3]
+        if self.rumor >= 5:
+            return 1
 
 
-def startGame(p_person, p_s1, p_s2, p_s3, p_s4, l):
+def startGame(flag, p_person, l, p_s1, p_s2, p_s3, p_s4):
     # Initialize Pygame
     pygame.init()
     pygame.display.set_caption("Rumours spreading")
@@ -171,7 +190,6 @@ def show_grid(grid):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
         # Clear the window
         screen.fill((255, 255, 255))
         # Draw the grid
@@ -189,7 +207,7 @@ def show_grid(grid):
             y = j * (cell_size + line_thickness)
             pygame.draw.line(screen, line_color, (0, y), (window_size[0], y), line_thickness)
 
-            # Update the display
+        # Update the display
         pygame.display.flip()
 
         # Quit Pygame
@@ -198,4 +216,4 @@ def show_grid(grid):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    startGame(0.5, 0.2, 0.3, 0.2, 0.3, 2)
+    startGame(False, 0.8, 2, 0.7, 0.3, 0, 0)
