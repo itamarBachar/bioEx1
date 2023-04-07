@@ -379,6 +379,8 @@ def show_grid(grid, length_of_wait, number_of_person):
     plt.plot(*zip(*lst_person_with_rumor))
     plt.show()
     # plot the graph of the rumor spreading over time (number of iterations)
+    plt.plot(*zip(*lst_rumor))
+    plt.show()
 
 
 # Press the green button in the gutter to run the script.
