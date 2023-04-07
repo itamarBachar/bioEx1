@@ -1,8 +1,7 @@
 import time
-import matplotlib.pyplot as plt
 import pygame
 import random
-from utils import check_input
+from utils import check_input, plot_results
 
 
 def show_menu():
@@ -93,15 +92,40 @@ def show_menu():
         # print the
     # Quit Pygame
     pygame.quit()
+    lst_most_rumor = []
+    lst_person = [0 for i in range(6)]
+    print(lst_person)
+
     try:
         flag = check_input(input_texts)
         if flag:
-            startGame(float(input_texts[0]), float(input_texts[1]), float(input_texts[2]), float(input_texts[3]),
-                      float(input_texts[4]), float(input_texts[5]))
+            for i in range(0, 10):
+                most_rumor_itreation, person_expose_per_iteration = startGame(float(input_texts[0]),
+                                                                              float(input_texts[1]),
+                                                                              float(input_texts[2]),
+                                                                              float(input_texts[3]),
+                                                                              float(input_texts[4]),
+                                                                              float(input_texts[5]))
+                lst_most_rumor.append(most_rumor_itreation)
+                for i in range(0, len(person_expose_per_iteration)):
+                    lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
+                plot_results(lst_person, input_texts)
         else:
-            startGame(0.5, 100, 0.02, 0.03, 0.25, 0.7)
+            for i in range(0, 10):
+                most_rumor_itreation, person_expose_per_iteration = startGame(0.2, 100, 0.02, 0.03, 0.25, 0.7)
+                lst_most_rumor.append(most_rumor_itreation)
+                for i in range(0, len(person_expose_per_iteration)):
+                    lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
+            input_texts = ["0.2", "100", "0.02", "0.03", "0.25", "0.7"]
+            plot_results(lst_person, input_texts)
     except ValueError:
-        startGame(0.5, 100, 0.02, 0.03, 0.25, 0.7)
+        for i in range(0, 10):
+            most_rumor_itreation, person_expose_per_iteration = startGame(0.2, 100, 0.02, 0.03, 0.25, 0.7)
+            lst_most_rumor.append(most_rumor_itreation)
+            for i in range(0, len(person_expose_per_iteration)):
+                lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
+        input_texts = ["0.2", "100", "0.02", "0.03", "0.25", "0.7"]
+        plot_results(lst_person, input_texts)
 
 
 # define const values
@@ -138,9 +162,10 @@ class Cell:
         self.spread_rumor = 0
 
     def draw(self, surface, x, y, cell_size):
-        if (self.rumor == 0):
+        if not self.is_person:
             color = (0, 0, 0)
-
+        elif self.rumor == 0:
+            color = (255, 0, 0)
         else:
             color = (255, 255, 255)
 
@@ -273,7 +298,7 @@ def startGame(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4):
     grid[random_person[0]][random_person[1]].rumor = 1
     grid[random_person[0]][random_person[1]].spread_rumor = 1
     print("Number of person: ", number_of_person)
-    show_grid(grid, length_of_wait, number_of_person)
+    return show_grid(grid, length_of_wait, number_of_person)
 
 
 def play_one_iteration(grid, length):
@@ -368,19 +393,25 @@ def show_grid(grid, length_of_wait, number_of_person):
         person_with_rumor += counter
         # sleep(0.1)
         lst_rumor.append((iteration, counter))
-        lst_person_with_rumor.append((iteration, person_with_rumor))
+        if iteration % 999 == 0:
+            precent = person_with_rumor / number_of_person
+            precent = precent * 100
+            lst_person_with_rumor.append(precent)
+        if iteration == 5000:
+            running = False
+        if person_with_rumor == number_of_person - 1:
+            # fill the list with the last precent
+            it = 5000 - iteration
+            it = it // 999
+            for i in range(it + 1):
+                lst_person_with_rumor.append(100)
+            running = False
         iteration += 1
         # Quit Pygame
         if person_with_rumor == number_of_person:
             running = False
     pygame.quit()
-    # add headline to the graph
-    print(person_with_rumor)
-    plt.plot(*zip(*lst_person_with_rumor))
-    plt.show()
-    # plot the graph of the rumor spreading over time (number of iterations)
-    plt.plot(*zip(*lst_rumor))
-    plt.show()
+    return lst_rumor, lst_person_with_rumor
 
 
 # Press the green button in the gutter to run the script.
