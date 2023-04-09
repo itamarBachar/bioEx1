@@ -1,6 +1,6 @@
 import time
-import pygame
 import random
+import pygame
 from utils import check_input, plot_results
 
 
@@ -111,20 +111,16 @@ def show_menu():
                     lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
                 plot_results(lst_person, input_texts)
         else:
-            for i in range(0, 10):
-                most_rumor_itreation, person_expose_per_iteration = startGame(0.2, 100, 0.02, 0.03, 0.25, 0.7)
-                lst_most_rumor.append(most_rumor_itreation)
-                for i in range(0, len(person_expose_per_iteration)):
-                    lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
-            input_texts = ["0.2", "100", "0.02", "0.03", "0.25", "0.7"]
-            plot_results(lst_person, input_texts)
+            for i in range(0, 1):
+                most_rumor_itreation, person_expose_per_iteration = startGame(0.5, 100, 0, 0.1, 0.2, 0.7)
+                plot_results(most_rumor_itreation)
     except ValueError:
         for i in range(0, 10):
-            most_rumor_itreation, person_expose_per_iteration = startGame(0.2, 100, 0.02, 0.03, 0.25, 0.7)
+            most_rumor_itreation, person_expose_per_iteration = startGame(0.8, 30, 0.02, 0.03, 0.05, 0.9)
             lst_most_rumor.append(most_rumor_itreation)
             for i in range(0, len(person_expose_per_iteration)):
                 lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
-        input_texts = ["0.2", "100", "0.02", "0.03", "0.25", "0.7"]
+        input_texts = ["0.8", "1", "0.02", "0.03", "0.05", "0.9"]
         plot_results(lst_person, input_texts)
 
 
@@ -361,6 +357,7 @@ def show_grid(grid, length_of_wait, number_of_person):
         # Handle events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                print(iteration)
                 running = False
 
         # Clear the window
@@ -391,25 +388,14 @@ def show_grid(grid, length_of_wait, number_of_person):
         # Update the display
         pygame.display.flip()
         person_with_rumor += counter
-        # sleep(0.1)
         lst_rumor.append((iteration, counter))
-        if iteration % 999 == 0:
-            precent = person_with_rumor / number_of_person
-            precent = precent * 100
-            lst_person_with_rumor.append(precent)
-        if iteration == 5000:
-            running = False
-        if person_with_rumor == number_of_person - 1:
-            # fill the list with the last precent
-            it = 5000 - iteration
-            it = it // 999
-            for i in range(it + 1):
-                lst_person_with_rumor.append(100)
+
+        precent = person_with_rumor
+        lst_person_with_rumor.append(precent)
+        if iteration == 7000:
             running = False
         iteration += 1
         # Quit Pygame
-        if person_with_rumor == number_of_person:
-            running = False
     pygame.quit()
     return lst_rumor, lst_person_with_rumor
 

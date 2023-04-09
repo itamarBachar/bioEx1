@@ -64,16 +64,8 @@ class Cell:
             chance = (1 / self.cell_type) * self.rumor
 
 
-def plot_results(lst_person, input_text):
-    # average the number of people exposed to the rumor
-    for i in range(0, len(lst_person)):
-        lst_person[i] = lst_person[i] / 10
-    # plot the graph of the number of people exposed to the rumor
-    plt.ylabel('percent of people exposed to the rumor')
-    plt.xlabel('number of iteration')
-    plt.plot(lst_person)
-    # put the values p and l and s1 s2 s3 s4 in the graph title and the legend
-    plt.title(
-        f"p={input_text[0]}, l={input_text[1]}, s1={input_text[2]}, s2={input_text[3]}, s3={input_text[4]}, s4={input_text[5]}")
-    # save the graph
-    plt.savefig('graph5.png')
+def plot_results(most_rumor_itreation):
+    plt.plot([i[0] for i in most_rumor_itreation] , [i[1] for i in most_rumor_itreation])
+    plt.xlabel('Iteration')
+    plt.ylabel('New Person Expose')
+    plt.show()
