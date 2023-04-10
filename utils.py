@@ -1,3 +1,5 @@
+import math
+
 import pygame
 from matplotlib import pyplot as plt
 
@@ -65,7 +67,15 @@ class Cell:
 
 
 def plot_results(most_rumor_itreation):
-    plt.plot([i[0] for i in most_rumor_itreation] , [i[1] for i in most_rumor_itreation])
+    plt.plot([i[0] for i in most_rumor_itreation], [i[1] for i in most_rumor_itreation])
     plt.xlabel('Iteration')
     plt.ylabel('New Person Expose')
     plt.show()
+
+
+def distance(point1, point2):
+    x1, y1 = point1
+    x2, y2 = point2
+    dx = x2 - x1
+    dy = y2 - y1
+    return math.sqrt(dx * dx + dy * dy)

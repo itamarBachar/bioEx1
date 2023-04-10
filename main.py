@@ -1,7 +1,18 @@
 import time
 import random
+
 import pygame
-from utils import check_input, plot_results
+from utils import check_input, plot_results, distance
+
+
+###
+#
+#
+#  explanation of the code and how to run in separate explanation.txt !
+#
+#
+#
+###
 
 
 def show_menu():
@@ -23,7 +34,12 @@ def show_menu():
         for i in range(6)
     ]
     input_texts = [""] * len(input_boxes)
-
+    radio_button1_selected = True
+    radio_button2_selected = False
+    radio_button_size = 20
+    radio_button_spacing = 50
+    radio_button1_pos = (570, 600)
+    radio_button2_pos = (570, 600 + radio_button_spacing)
     # Set up button
     button_rect = pygame.Rect(550, 680, 100, 50)
     button_color = (255, 255, 255)
@@ -59,7 +75,13 @@ def show_menu():
                     last_click = event.pos
                     if button_rect.collidepoint(event.pos):
                         running = False
-
+                    mouse_pos = pygame.mouse.get_pos()
+                    if distance(mouse_pos, radio_button1_pos) < radio_button_size:
+                        radio_button1_selected = True
+                        radio_button2_selected = False
+                    elif distance(mouse_pos, radio_button2_pos) < radio_button_size:
+                        radio_button1_selected = False
+                        radio_button2_selected = True
         # Clear the screen
         screen.fill((0, 0, 0))
 
@@ -67,6 +89,29 @@ def show_menu():
         title_text = title_font.render("Welcome to Spreading Rumours", True, (255, 255, 255))
         title_rect = title_text.get_rect(center=(screen_width // 2, 100))
         screen.blit(title_text, title_rect)
+
+        # Draw radio button 1
+        pygame.draw.circle(screen, (255, 255, 255), radio_button1_pos, radio_button_size)
+        if radio_button1_selected:
+            pygame.draw.circle(screen, (255, 0, 0), radio_button1_pos, radio_button_size - 4)
+
+        # Draw radio button 1 label
+        label_font = pygame.font.SysFont('Arial', 20)
+        label_text = label_font.render('Option 1', True, (255, 255, 255))
+        label_rect = label_text.get_rect()
+        label_rect.center = (radio_button1_pos[0] + radio_button_size + 40, radio_button1_pos[1])
+        screen.blit(label_text, label_rect)
+
+        # Draw radio button 2
+        pygame.draw.circle(screen, (255, 255, 255), radio_button2_pos, radio_button_size)
+        if radio_button2_selected:
+            pygame.draw.circle(screen, (255, 0, 0), radio_button2_pos, radio_button_size - 4)
+
+        # Draw radio button 2 label
+        label_text = label_font.render('Option 2', True, (255, 255, 255))
+        label_rect = label_text.get_rect()
+        label_rect.center = (radio_button2_pos[0] + radio_button_size + 40, radio_button2_pos[1])
+        screen.blit(label_text, label_rect)
 
         # Draw input boxes and labels
         for i, box in enumerate(input_boxes):
@@ -92,36 +137,37 @@ def show_menu():
         # print the
     # Quit Pygame
     pygame.quit()
-    lst_most_rumor = []
-    lst_person = [0 for i in range(6)]
-    print(lst_person)
 
     try:
         flag = check_input(input_texts)
         if flag:
             for i in range(0, 10):
-                most_rumor_itreation, person_expose_per_iteration = startGame(float(input_texts[0]),
-                                                                              float(input_texts[1]),
-                                                                              float(input_texts[2]),
-                                                                              float(input_texts[3]),
-                                                                              float(input_texts[4]),
-                                                                              float(input_texts[5]))
-                lst_most_rumor.append(most_rumor_itreation)
-                for i in range(0, len(person_expose_per_iteration)):
-                    lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
-                plot_results(lst_person, input_texts)
+                if radio_button1_selected:
+                    startGame(float(input_texts[0]),
+                              float(input_texts[1]),
+                              float(input_texts[2]),
+                              float(input_texts[3]),
+                              float(input_texts[4]),
+                              float(input_texts[5]))
+                elif radio_button2_selected:
+                    B_Game(float(input_texts[0]),
+                           float(input_texts[1]),
+                           float(input_texts[2]),
+                           float(input_texts[3]),
+                           float(input_texts[4]),
+                           float(input_texts[5]))
         else:
-            for i in range(0, 1):
-                most_rumor_itreation, person_expose_per_iteration = startGame(0.5, 100, 0, 0.1, 0.2, 0.7)
-                plot_results(most_rumor_itreation)
+            for i in range(0, 10):
+                if radio_button1_selected:
+                    startGame(0.8, 100, 0.1, 0.1, 0.1, 0.7)
+                elif radio_button2_selected:
+                   C_Game(0.8, 100, 0.1, 0.1, 0.1, 0.7)
     except ValueError:
         for i in range(0, 10):
-            most_rumor_itreation, person_expose_per_iteration = startGame(0.8, 30, 0.02, 0.03, 0.05, 0.9)
-            lst_most_rumor.append(most_rumor_itreation)
-            for i in range(0, len(person_expose_per_iteration)):
-                lst_person[i] = person_expose_per_iteration[i] + lst_person[i]
-        input_texts = ["0.8", "1", "0.02", "0.03", "0.05", "0.9"]
-        plot_results(lst_person, input_texts)
+            if radio_button1_selected:
+                startGame(0.8, 100, 0.1, 0.1, 0.1, 0.7)
+            elif radio_button2_selected:
+                C_Game(0.8, 100, 0.1, 0.1, 0.1, 0.7)
 
 
 # define const values
@@ -164,11 +210,23 @@ class Cell:
             color = (255, 0, 0)
         else:
             color = (255, 255, 255)
+        # if not self.is_person:
+        #     color = (0, 0, 0)
+        # elif self.cell_type == S1:
+        #     color = (255, 255, 0)
+        # elif self.cell_type == S4:
+        #     color = (0, 255, 0)
+        # elif self.cell_type == S3:
+        #     color = (255, 0, 0)
+        # else:
+        #     color = (0, 0, 255)
 
         rect = pygame.Rect(x, y, cell_size, cell_size)
         pygame.draw.rect(surface, color, rect)
 
     def chance_spread(self):
+        if not self.is_person:
+            return 0
         if self.spread_rumor == 0:
             return 0
         if self.spread_rumor == 1:
@@ -297,6 +355,101 @@ def startGame(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4):
     return show_grid(grid, length_of_wait, number_of_person)
 
 
+def B_Game(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4):
+    opening_screen(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4)
+    number_of_blocks = int((1 - p_person) * grid_width * grid_height)
+    number_of_person = int(p_person * grid_width * grid_height)
+    # Initialize Pygame
+    pygame.init()
+    pygame.display.set_caption("Rumours spreading")
+    # Create the grid
+    grid = []
+    for z in range(grid_width):
+        row = []
+        for k in range(grid_height):
+            cell = Cell(False, None, z, k, length_of_wait)
+            row.append(cell)
+        grid.append(row)
+    number_of_lines = number_of_blocks // 100
+    lst_of_places = []
+    # over from the middle line
+    for i in range(grid_width):
+        row = []
+        for j in range(number_of_lines):
+            if j >= grid_height:
+                break
+            grid[i][j].is_person = False
+            grid[i][j].cell_type = None
+            # add the index of the x row and the y to the list
+            lst_of_places.append((i, j))
+        grid.append(row)
+    # go over the grid from start to end and fill with randoms s1 s2 s3 s4
+    list_person = []
+    for i in range(grid_width):
+        for j in range(grid_height):
+            # check if (i,j) is in the list of places
+            if (i, j) not in lst_of_places:
+                grid[i][j].is_person = True
+                # choose the type of the person randomly
+                cell_type = random.choices([S1, S2, S3, S4], [p_s1, p_s2, p_s3, p_s4])[0]
+                grid[i][j].cell_type = cell_type
+                if cell_type != S4:
+                    list_person.append((i, j))
+    random_person = random.choice(list_person)
+    grid[random_person[0]][random_person[1]].rumor = 1
+    grid[random_person[0]][random_person[1]].spread_rumor = 1
+    return show_grid(grid, length_of_wait, number_of_person)
+
+
+def C_Game(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4):
+    opening_screen(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4)
+    number_of_blocks = int((1 - p_person) * grid_width * grid_height)
+    # try to put empty blocks in the every second row
+    number_of_person = int(p_person * grid_width * grid_height)
+    pygame.init()
+    pygame.display.set_caption("Rumours spreading")
+    # Create the grid
+    grid = []
+    for z in range(grid_width):
+        row = []
+        for k in range(grid_height):
+            cell = Cell(False, None, z, k, length_of_wait)
+            row.append(cell)
+        grid.append(row)
+    number_of_lines = number_of_blocks // 100
+    lst_of_places = []
+    # over from the middle line
+    for i in range(grid_width-1):
+        row = []
+        for j in range(number_of_lines):
+            if j % 2 == 1:
+                continue
+            if j >= 2 * number_of_lines:
+                break
+            grid[i][j].is_person = False
+            grid[i][j].cell_type = None
+            number_of_blocks -= 1
+            # add the index of the x row and the y to the list
+            lst_of_places.append((i, j))
+        grid.append(row)
+    # go over the grid from start to end and fill with randoms s1 s2 s3 s4
+    list_person = []
+    for i in range(grid_width):
+        for j in range(grid_height):
+            # check if (i,j) is in the list of places
+            if (i, j) not in lst_of_places:
+                grid[i][j].is_person = True
+                # choose the type of the person randomly
+                cell_type = random.choices([S1, S2, S3, S4], [p_s1, p_s2, p_s3, p_s4])[0]
+                grid[i][j].cell_type = cell_type
+                if cell_type != S4:
+                    list_person.append((i, j))
+    random_person = random.choice(list_person)
+    grid[random_person[0]][random_person[1]].rumor = 1
+    grid[random_person[0]][random_person[1]].spread_rumor = 1
+    return show_grid(grid, length_of_wait, number_of_person)
+
+
 def play_one_iteration(grid, length):
     list_update = []
     count_new_rumor = 0
@@ -332,15 +485,6 @@ def play_one_iteration(grid, length):
         else:
             grid[list_update[i][0]][list_update[i][1]].spread_rumor += 1
     return count_new_rumor
-
-
-def check_if_grid_change(grid, last_grid):
-    # check if the grid change
-    for i in range(grid_width):
-        for j in range(grid_height):
-            if grid[i][j].rumor != last_grid[i][j].rumor:
-                return True
-    return False
 
 
 def show_grid(grid, length_of_wait, number_of_person):
@@ -380,7 +524,7 @@ def show_grid(grid, length_of_wait, number_of_person):
         # Update the display
         pygame.display.flip()
         counter = play_one_iteration(grid, length_of_wait)
-        text_surface = font.render("Iteration: {}".format(iteration), True, (255, 0, 0))
+        text_surface = font.render("Iteration: {}".format(iteration), True, (0, 255, 0))
 
         # Blit the text surface onto the screen surface
         screen.blit(text_surface, (10, 10))
