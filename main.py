@@ -43,7 +43,7 @@ def show_menu():
     radio_button2_pos = (570, 520 + radio_button_spacing)
     radio_button3_pos = (570, 520 + radio_button_spacing + radio_button_spacing)
     # Set up button
-    button_rect = pygame.Rect(550, 680, 100, 50)
+    button_rect = pygame.Rect(550, 650, 100, 50)
     button_color = (255, 255, 255)
     button_text = label_font.render("Play", True, (0, 0, 0))
     button_text_rect = button_text.get_rect(center=button_rect.center)
