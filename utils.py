@@ -1,7 +1,6 @@
 import math
 
-import pygame
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 
 
 def check_input(input_text):
@@ -20,57 +19,37 @@ def check_input(input_text):
     return True
 
 
-# define const values
-S1 = 1
-S2 = 2
-S3 = 3
-S4 = 4
-COLORS = {
-    S1: (255, 255, 255),
-    S2: (0, 0, 255),
-    S3: (0, 255, 0),
-    S4: (255, 0, 0),
-    None: (0, 0, 0)
-}
-grid_width = 100
-grid_height = 100
-window_width = 700
-window_height = 700
-line_thickness = 1
-window_size = (window_width + (grid_width + 1) * line_thickness, window_height + (grid_height + 1) * line_thickness)
-line_color = (128, 128, 128)
-cell_size = 7
-
-
-class Cell:
-    def _init_(self, is_person, cell_type, x, y, l):
-        self.is_person = is_person
-        self.cell_type = cell_type
-        self.x = x
-        self.y = y
-        self.rumor = 0
-        self.l = l
-        self.wait = 0
-
-    def draw(self, surface, x, y, cell_size):
-        if self.rumor == 0:
-            color = (0, 0, 0)
-
-        else:
-            color = (255, 255, 255)
-        rect = pygame.Rect(x, y, cell_size, cell_size)
-        pygame.draw.rect(surface, color, rect)
-
-    def forward(self):
-        if self.rumor > 0:
-            chance = (1 / self.cell_type) * self.rumor
-
-
-def plot_results(most_rumor_itreation):
-    plt.plot([i[0] for i in most_rumor_itreation], [i[1] for i in most_rumor_itreation])
-    plt.xlabel('Iteration')
-    plt.ylabel('New Person Expose')
-    plt.show()
+# def plot_results(most_rumor_itreation, p, l, s1, s2, s3, s4):
+#     print(most_rumor_itreation)
+#     # devide all numbers by 5000 to get the percentage
+#     for elment in range(len(most_rumor_itreation)):
+#         most_rumor_itreation[elment] = float(most_rumor_itreation[elment] / 5000) * 100
+#     # plot the results
+#     # put headline of the values of p L s1 s2 s3 s4
+#     plt.title("p = " + str(p) + " L = " + str(l) + " s1 = " + str(s1) + " s2 = " + str(s2) + " s3 = " + str(
+#         s3) + " s4 = " + str(s4))
+#     plt.plot(most_rumor_itreation)
+#     plt.xlabel('Iteration')
+#     plt.ylabel('Precentage of people who heard the rumor')
+#     plt.show()
+#
+#
+# def plot_results2(most_rumor_itreation, flag):
+#     # Step 1
+#     sums = [0] * len(most_rumor_itreation[0])
+#     for lst in most_rumor_itreation:
+#         for i in range(len(lst)):
+#             sums[i] += lst[i]
+#
+#     # Step 2
+#
+#     for i in range(len(sums)):
+#         sums[i] = sums[i] / flag
+#
+#     plt.plot(sums)
+#     plt.xlabel('Iteration')
+#     plt.ylabel('New Person Expose')
+#     plt.show()
 
 
 def distance(point1, point2):

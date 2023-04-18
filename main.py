@@ -2,13 +2,13 @@ import time
 import random
 
 import pygame
-from utils import check_input, plot_results, distance
+from utils import check_input, distance
 
 
 ###
 #
 #
-#  explanation of the code and how to run in separate explanation.txt !
+#  explanation of how to run appear in the report !
 #
 #
 #
@@ -36,10 +36,12 @@ def show_menu():
     input_texts = [""] * len(input_boxes)
     radio_button1_selected = True
     radio_button2_selected = False
+    radio_button3_selected = False
     radio_button_size = 20
     radio_button_spacing = 50
-    radio_button1_pos = (570, 600)
-    radio_button2_pos = (570, 600 + radio_button_spacing)
+    radio_button1_pos = (570, 520)
+    radio_button2_pos = (570, 520 + radio_button_spacing)
+    radio_button3_pos = (570, 520 + radio_button_spacing + radio_button_spacing)
     # Set up button
     button_rect = pygame.Rect(550, 680, 100, 50)
     button_color = (255, 255, 255)
@@ -79,9 +81,15 @@ def show_menu():
                     if distance(mouse_pos, radio_button1_pos) < radio_button_size:
                         radio_button1_selected = True
                         radio_button2_selected = False
+                        radio_button3_selected = False
                     elif distance(mouse_pos, radio_button2_pos) < radio_button_size:
                         radio_button1_selected = False
                         radio_button2_selected = True
+                        radio_button3_selected = False
+                    elif distance(mouse_pos, radio_button3_pos) < radio_button_size:
+                        radio_button1_selected = False
+                        radio_button2_selected = False
+                        radio_button3_selected = True
         # Clear the screen
         screen.fill((0, 0, 0))
 
@@ -108,9 +116,18 @@ def show_menu():
             pygame.draw.circle(screen, (255, 0, 0), radio_button2_pos, radio_button_size - 4)
 
         # Draw radio button 2 label
-        label_text = label_font.render('Option 2', True, (255, 255, 255))
+        label_text = label_font.render('Option 2a', True, (255, 255, 255))
         label_rect = label_text.get_rect()
         label_rect.center = (radio_button2_pos[0] + radio_button_size + 40, radio_button2_pos[1])
+        screen.blit(label_text, label_rect)
+
+        pygame.draw.circle(screen, (255, 255, 255), radio_button3_pos, radio_button_size)
+        if radio_button3_selected:
+            pygame.draw.circle(screen, (255, 0, 0), radio_button3_pos, radio_button_size - 4)
+
+        label_text = label_font.render('Option 2b', True, (255, 255, 255))
+        label_rect = label_text.get_rect()
+        label_rect.center = (radio_button3_pos[0] + radio_button_size + 40, radio_button3_pos[1])
         screen.blit(label_text, label_rect)
 
         # Draw input boxes and labels
@@ -141,33 +158,41 @@ def show_menu():
     try:
         flag = check_input(input_texts)
         if flag:
-            for i in range(0, 10):
-                if radio_button1_selected:
-                    startGame(float(input_texts[0]),
-                              float(input_texts[1]),
-                              float(input_texts[2]),
-                              float(input_texts[3]),
-                              float(input_texts[4]),
-                              float(input_texts[5]))
-                elif radio_button2_selected:
-                    B_Game(float(input_texts[0]),
-                           float(input_texts[1]),
-                           float(input_texts[2]),
-                           float(input_texts[3]),
-                           float(input_texts[4]),
-                           float(input_texts[5]))
-        else:
-            for i in range(0, 10):
-                if radio_button1_selected:
-                    startGame(0.8, 100, 0.1, 0.1, 0.1, 0.7)
-                elif radio_button2_selected:
-                   C_Game(0.8, 100, 0.1, 0.1, 0.1, 0.7)
-    except ValueError:
-        for i in range(0, 10):
             if radio_button1_selected:
-                startGame(0.8, 100, 0.1, 0.1, 0.1, 0.7)
+                startGame(float(input_texts[0]),
+                          float(input_texts[1]),
+                          float(input_texts[2]),
+                          float(input_texts[3]),
+                          float(input_texts[4]),
+                          float(input_texts[5]))
             elif radio_button2_selected:
-                C_Game(0.8, 100, 0.1, 0.1, 0.1, 0.7)
+                B_Game(float(input_texts[0]),
+                       float(input_texts[1]),
+                       float(input_texts[2]),
+                       float(input_texts[3]),
+                       float(input_texts[4]),
+                       float(input_texts[5]))
+            elif radio_button3_selected:
+                D_Game(float(input_texts[0]),
+                       float(input_texts[1]),
+                       float(input_texts[2]),
+                       float(input_texts[3]),
+                       float(input_texts[4]),
+                       float(input_texts[5]))
+        else:
+            if radio_button1_selected:
+                lst1, lst2 = startGame(0.55, 100, 0.02, 0.03, 0.25, 0.7)
+            elif radio_button2_selected:
+                B_Game(0.7, 10, 0.1, 0.2, 0.2, 0.5)
+            elif radio_button3_selected:
+                lst1, lst2 = D_Game(0.5, 100, 0.1, 0.1, 0.1, 0.7)
+    except ValueError:
+        if radio_button1_selected:
+            lst1, lst2 = startGame(0.55, 100, 0.02, 0.03, 0.25, 0.7)
+        elif radio_button2_selected:
+            B_Game(0.7, 10, 0.1, 0.2, 0.2, 0.5)
+        elif radio_button3_selected:
+            D_Game(0.83, 100, 0.1, 0.25, 0.2, 0.45)
 
 
 # define const values
@@ -210,16 +235,6 @@ class Cell:
             color = (255, 0, 0)
         else:
             color = (255, 255, 255)
-        # if not self.is_person:
-        #     color = (0, 0, 0)
-        # elif self.cell_type == S1:
-        #     color = (255, 255, 0)
-        # elif self.cell_type == S4:
-        #     color = (0, 255, 0)
-        # elif self.cell_type == S3:
-        #     color = (255, 0, 0)
-        # else:
-        #     color = (0, 0, 255)
 
         rect = pygame.Rect(x, y, cell_size, cell_size)
         pygame.draw.rect(surface, color, rect)
@@ -401,49 +416,68 @@ def B_Game(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4):
     return show_grid(grid, length_of_wait, number_of_person)
 
 
-def C_Game(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4):
+def D_Game(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4):
     opening_screen(p_person, length_of_wait, p_s1, p_s2, p_s3, p_s4)
-    number_of_blocks = int((1 - p_person) * grid_width * grid_height)
-    # try to put empty blocks in the every second row
     number_of_person = int(p_person * grid_width * grid_height)
+    grid = []
+    list_person = []
+    number_of_s1 = 0
+    number_of_s4 = 0
+    # Initialize the grid with empty cells
     pygame.init()
     pygame.display.set_caption("Rumours spreading")
-    # Create the grid
-    grid = []
-    for z in range(grid_width):
+    for k in range(grid_width):
         row = []
-        for k in range(grid_height):
-            cell = Cell(False, None, z, k, length_of_wait)
+        for z in range(grid_height):
+            cell = Cell(False, None, k, z, length_of_wait)
             row.append(cell)
         grid.append(row)
-    number_of_lines = number_of_blocks // 100
-    lst_of_places = []
-    # over from the middle line
-    for i in range(grid_width-1):
-        row = []
-        for j in range(number_of_lines):
-            if j % 2 == 1:
-                continue
-            if j >= 2 * number_of_lines:
-                break
-            grid[i][j].is_person = False
-            grid[i][j].cell_type = None
-            number_of_blocks -= 1
-            # add the index of the x row and the y to the list
-            lst_of_places.append((i, j))
-        grid.append(row)
-    # go over the grid from start to end and fill with randoms s1 s2 s3 s4
-    list_person = []
+    # Place S1 cells in clusters surrounded by S4 cells or empty cells
+    while number_of_s1 < grid_width * grid_height * p_person * p_s1:
+        x, y = random.randint(0, grid_width - 1), random.randint(0, grid_height - 1)
+        if not grid[x][y].is_person:
+            list_person.append((x, y))
+            number_of_s1 += 1
+            grid[x][y].is_person = True
+            grid[x][y].cell_type = S1
+            # Add S4 or empty cells around the S1 cell
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    if i == 0 and j == 0:
+                        continue
+                    else:
+                        if i + x >= 0 and i + x < grid_width and j + y >= 0 and j + y < grid_height:
+                            if not grid[i + x][j + y].is_person:
+                                if number_of_s4 < grid_width * grid_height * p_person * p_s4:
+                                    grid[i + x][j + y].cell_type = S4
+                                    grid[i + x][j + y].is_person = True
+                                    number_of_s4 += 1
+
+    s2_counter = 0
+    s3_counter = 0
+    # Fill the remaining cells with S2 and S3 cells
     for i in range(grid_width):
         for j in range(grid_height):
-            # check if (i,j) is in the list of places
-            if (i, j) not in lst_of_places:
+            if not grid[i][j].is_person and s2_counter < grid_width * grid_height * p_person * (p_s2):
                 grid[i][j].is_person = True
-                # choose the type of the person randomly
-                cell_type = random.choices([S1, S2, S3, S4], [p_s1, p_s2, p_s3, p_s4])[0]
-                grid[i][j].cell_type = cell_type
-                if cell_type != S4:
-                    list_person.append((i, j))
+                grid[i][j].cell_type = S2
+                s2_counter += 1
+                list_person.append((i, j))
+    # Fill the remaining cells with S2 and S3 cells
+    for i in range(grid_width):
+        for j in range(grid_height):
+            if not grid[i][j].is_person and s3_counter < grid_width * grid_height * p_person * (p_s3):
+                grid[i][j].is_person = True
+                grid[i][j].cell_type = S3
+                s3_counter += 1
+                list_person.append((i, j))
+    while (number_of_s4 < grid_width * grid_height * p_person * p_s4):
+        x, y = random.randint(0, grid_width - 1), random.randint(0, grid_height - 1)
+        if not grid[x][y].is_person:
+            number_of_s4 += 1
+            grid[x][y].is_person = True
+            grid[x][y].cell_type = S4
+
     random_person = random.choice(list_person)
     grid[random_person[0]][random_person[1]].rumor = 1
     grid[random_person[0]][random_person[1]].spread_rumor = 1
@@ -462,15 +496,8 @@ def play_one_iteration(grid, length):
                         grid[i][j].spread_rumor = 0
                         for x in range(-1, 2):
                             for y in range(-1, 2):
-                                # if it ok to pass only to 4 neighbours.
-                                # if x == -1 and y == -1:
-                                #     continue
-                                # if x == 1 and y == 1:
-                                #     continue
-                                # if x == -1 and y == 1:
-                                #     continue
-                                # if x == 1 and y == -1:
-                                #     continue
+                                if x == 0 and y == 0:
+                                    continue
                                 if 0 <= i + x < grid_width and 0 <= j + y < grid_height:
                                     if grid[i + x][j + y].is_person:
                                         list_update.append((i + x, j + y))
@@ -484,7 +511,7 @@ def play_one_iteration(grid, length):
             grid[list_update[i][0]][list_update[i][1]].spread_rumor = +1
         else:
             grid[list_update[i][0]][list_update[i][1]].spread_rumor += 1
-    return count_new_rumor
+    return grid, count_new_rumor
 
 
 def show_grid(grid, length_of_wait, number_of_person):
@@ -523,7 +550,7 @@ def show_grid(grid, length_of_wait, number_of_person):
             pygame.draw.line(screen, line_color, (0, y), (window_size[0], y), line_thickness)
         # Update the display
         pygame.display.flip()
-        counter = play_one_iteration(grid, length_of_wait)
+        grid, counter = play_one_iteration(grid, length_of_wait)
         text_surface = font.render("Iteration: {}".format(iteration), True, (0, 255, 0))
 
         # Blit the text surface onto the screen surface
@@ -536,7 +563,7 @@ def show_grid(grid, length_of_wait, number_of_person):
 
         precent = person_with_rumor
         lst_person_with_rumor.append(precent)
-        if iteration == 7000:
+        if iteration == 9000:
             running = False
         iteration += 1
         # Quit Pygame
