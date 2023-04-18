@@ -19,7 +19,7 @@ def show_menu():
     pygame.init()
 
     # Set up the screen
-    screen_width = 750
+    screen_width = 680
     screen_height = 730
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Spreading rumours")
